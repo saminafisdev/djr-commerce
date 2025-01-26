@@ -1,3 +1,5 @@
+import { Link as RouterLink } from "react-router";
+
 import { Rating } from "@/components/ui/rating";
 import {
   Box,
@@ -10,6 +12,7 @@ import {
   Group,
   IconButton,
   Image,
+  Link,
   Text,
 } from "@chakra-ui/react";
 
@@ -43,7 +46,11 @@ const ProductCard = () => {
           </Float>
         </Center>
         <Box>
-          <Text textStyle={"xl"}>T-shirt for men</Text>
+          <Text textStyle={"xl"}>
+            <Link variant={"plain"} asChild>
+              <RouterLink to={`/products/1`}>T-shirt for men</RouterLink>
+            </Link>
+          </Text>
           <Group>
             <Rating
               defaultValue={3}
