@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Electronics",
+    "description": "Devices and gadgets"
+  },
+  {
+    "name": "Books",
+    "description": "Printed and digital books"
+  },
+  {
+    "name": "Clothing",
+    "description": "Men's and women's clothing"
+  },
+  {
+    "name": "Home & Kitchen",
+    "description": "Appliances and kitchenware"
+  },
+  {
+    "name": "Sports & Outdoors",
+    "description": "Equipment and gear for sports and outdoor activities"
+  },
+  {
+    "name": "Toys & Games",
+    "description": "Children's toys and games"
+  },
+  {
+    "name": "Beauty & Personal Care",
+    "description": "Products for beauty and personal care"
+  },
+  {
+    "name": "Automotive",
+    "description": "Car accessories and parts"
+  },
+  {
+    "name": "Health & Wellness",
+    "description": "Health and wellness products"
+  },
+  {
+    "name": "Office Supplies",
+    "description": "Office equipment and supplies"
+  },
+  {
+    "name": "Jewelry",
+    "description": "Rings, necklaces, and other jewelry"
+  },
+  {
+    "name": "Pet Supplies",
+    "description": "Products for pets"
+  },
+  {
+    "name": "Garden & Outdoor",
+    "description": "Gardening tools and outdoor furniture"
+  },
+  {
+    "name": "Musical Instruments",
+    "description": "Instruments and music accessories"
+  },
+  {
+    "name": "Groceries",
+    "description": "Food and beverages"
+  }
+]
