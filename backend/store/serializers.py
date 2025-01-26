@@ -18,6 +18,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description"]
 
 
+class SimpleProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id", "name", "unit_price"]
+
+
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -53,6 +59,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+
     class Meta:
         model = Cart
         fields = ["id", "customer", "created_at"]
