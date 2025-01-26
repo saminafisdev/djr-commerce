@@ -1,4 +1,12 @@
-import { Box, Container, HStack, Icon, Input } from "@chakra-ui/react";
+import {
+  Box,
+  ButtonGroup,
+  Container,
+  HStack,
+  Icon,
+  IconButton,
+  Input,
+} from "@chakra-ui/react";
 
 import { FiShoppingCart } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
@@ -19,17 +27,17 @@ export const Navbar = () => {
           <InputGroup startElement={<FiSearch />}>
             <Input placeholder="What are you looking for" />
           </InputGroup>
-          <HStack gap={6}>
-            <Icon fontSize={"2xl"}>
+          <ButtonGroup variant={"ghost"} spaceX={3}>
+            <IconButton>
               <FiShoppingCart />
-            </Icon>
-            <Icon fontSize={"2xl"}>
+            </IconButton>
+            <IconButton>
               <FiHeart />
-            </Icon>
-            <Icon fontSize={"2xl"}>
+            </IconButton>
+            <IconButton>
               <FiUser />
-            </Icon>
-          </HStack>
+            </IconButton>
+          </ButtonGroup>
         </HStack>
       </Container>
     </Box>
