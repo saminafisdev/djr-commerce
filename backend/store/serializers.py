@@ -58,18 +58,30 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ["id", "order", "product", "quantity", "unit_price"]
 
 
+class CartItemSerializer(serializers.ModelSerializer):
+    subtotal = serializers.SerializerMethodField()
+
+    def get_subtotal(self, cart_item):
+        return cart_item.product.unit_price * cart_item.quantity
+
+    class Meta:
+        model = CartItem
+        fields = ["id", "product", "quantity", "subtotal"]
+
+
 class CartSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
+    items = CartItemSerializer(many=True, read_only=True)
+    total_price = serializers.SerializerMethodField()
+
+    def get_total_price(self, cart):
+        return sum(
+            [item.product.unit_price * item.quantity for item in cart.items.all()]
+        )
 
     class Meta:
         model = Cart
-        fields = ["id", "customer", "created_at"]
-
-
-class CartItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CartItem
-        fields = ["id", "cart", "product", "quantity"]
+        fields = ["id", "customer", "created_at", "items", "total_price"]
 
 
 class AddressSerializer(serializers.ModelSerializer):
