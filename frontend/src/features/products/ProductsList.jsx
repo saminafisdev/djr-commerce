@@ -7,12 +7,12 @@ import {
   Center,
   Container,
   Float,
-  Grid,
   GridItem,
   Group,
   IconButton,
   Image,
   Link,
+  SimpleGrid,
   Text,
 } from "@chakra-ui/react";
 
@@ -72,11 +72,11 @@ const ProductCard = () => {
 
 export const ProductsList = () => {
   return (
-    <Container>
+    <Container py={6}>
       <Text fontSize={"2xl"} fontWeight={"medium"} mb={4}>
         Product List
       </Text>
-      <Grid templateColumns={"repeat(4, 1fr)"} gap={4}>
+      <SimpleGrid minChildWidth={"xs"} gap={4}>
         <ProductCard />
         <ProductCard />
         <ProductCard />
@@ -86,7 +86,7 @@ export const ProductsList = () => {
         <ProductCard />
         <ProductCard />
         <ProductCard />
-      </Grid>
+      </SimpleGrid>
     </Container>
   );
 };
