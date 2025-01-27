@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from .models import (
@@ -43,7 +44,7 @@ class ProductViewset(viewsets.ModelViewSet):
 
     def get_object(self):
         slug = self.kwargs.get("slug")
-        return self.queryset.get(slug=slug)
+        return get_object_or_404(self.queryset, slug=slug)
 
 
 class CustomerViewset(viewsets.ModelViewSet):
