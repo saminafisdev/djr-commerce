@@ -36,6 +36,11 @@ class ProductViewset(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     pagination_class.page_size = 10
 
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return ProductSerializer
+        return super().get_serializer_class()
+
     def get_object(self):
         slug = self.kwargs.get("slug")
         return self.queryset.get(slug=slug)
