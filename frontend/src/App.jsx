@@ -3,6 +3,8 @@ import { Home } from "./components/Home";
 import { MainLayout } from "./layout/MainLayout";
 import { ProductsList } from "./features/products/ProductsList";
 import { ProductDetail } from "./features/products/ProductDetail";
+import { Signup } from "./features/auth/Signup";
+import { Login } from "./features/auth/Login";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
             <Route path="1" element={<ProductDetail />} />
           </Route>
         </Route>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );
