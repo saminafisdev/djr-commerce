@@ -19,8 +19,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FiHeart, FiShoppingBag } from "react-icons/fi";
+import { useGetProductQuery } from "./productsApi";
+import { useParams } from "react-router";
 
 export const ProductDetail = () => {
+  const { slug } = useParams();
+  const { data: product, isLoading, isError, error } = useGetProductQuery(slug);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {error?.message}</div>;
+
   return (
     <Container pt={8}>
       <Flex gap={12}>
@@ -43,12 +51,9 @@ export const ProductDetail = () => {
           </Float>
         </Square>
         <Stack gap={5}>
-          <Heading size={"4xl"}>Mens T-Shirt</Heading>
+          <Heading size={"4xl"}>{product.name}</Heading>
           <Text color={"gray.600"} fontSize={"lg"}>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum,
-            repellendus. Sunt voluptatem tenetur voluptatibus vero aliquam
-            minus, officiis iste magni, aut autem, quae voluptatum aliquid quia
-            aspernatur ab. Quaerat, distinctio?
+            {product.description}
           </Text>
           <Group>
             <Rating
@@ -60,7 +65,7 @@ export const ProductDetail = () => {
             <Text fontSize={"lg"}>(300)</Text>
           </Group>
           <Text fontSize={"3xl"} fontWeight={"bold"}>
-            $200
+            ${product.unit_price}
           </Text>
           <NumberInputRoot size={"lg"} width={200} defaultValue="1">
             <NumberInputLabel />

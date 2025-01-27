@@ -28,7 +28,7 @@ import { FiShoppingBag } from "react-icons/fi";
 import { useGetProductsQuery } from "./productsApi";
 import PropTypes from "prop-types";
 
-const ProductCard = ({ product: { id, name, unit_price } }) => {
+const ProductCard = ({ product: { name, slug, unit_price } }) => {
   return (
     <GridItem>
       <Box>
@@ -57,7 +57,7 @@ const ProductCard = ({ product: { id, name, unit_price } }) => {
         <Box>
           <Text textStyle={"xl"}>
             <Link variant={"plain"} asChild>
-              <RouterLink to={`/products/${id}`}>{name}</RouterLink>
+              <RouterLink to={`/products/${slug}`}>{name}</RouterLink>
             </Link>
           </Text>
           <Group>
@@ -120,6 +120,7 @@ ProductCard.propTypes = {
   product: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    unit_price: PropTypes.number.isRequired,
+    slug: PropTypes.string.isRequired,
+    unit_price: PropTypes.string.isRequired,
   }).isRequired,
 };
