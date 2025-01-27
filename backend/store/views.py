@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 from .models import (
     Category,
     Product,
@@ -31,6 +32,8 @@ class CategoryViewset(viewsets.ModelViewSet):
 class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 10
 
 
 class CustomerViewset(viewsets.ModelViewSet):
