@@ -1,4 +1,5 @@
 import {
+  DrawerActionTrigger,
   DrawerBackdrop,
   DrawerBody,
   DrawerCloseTrigger,
@@ -9,9 +10,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { IconButton, Stack, StackSeparator } from "@chakra-ui/react";
+import { Button, IconButton, Stack, StackSeparator } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import { CartDetail } from "./CartDetail";
+import { EmptyCart } from "./EmptyCart";
 
 export const CartDrawer = () => {
   return (
@@ -28,13 +30,18 @@ export const CartDrawer = () => {
           <DrawerTitle fontSize={"2xl"}>My Cart</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          <Stack spaceY={4} separator={<StackSeparator />}>
+          {/* <Stack spaceY={4} separator={<StackSeparator />}>
             <CartDetail />
             <CartDetail />
             <CartDetail />
-          </Stack>
+          </Stack> */}
+          <EmptyCart />
         </DrawerBody>
-        <DrawerFooter />
+        <DrawerFooter>
+          <DrawerActionTrigger asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerActionTrigger>
+        </DrawerFooter>
       </DrawerContent>
     </DrawerRoot>
   );
