@@ -9,12 +9,12 @@ import {
 } from "@chakra-ui/react";
 
 import { FiSearch } from "react-icons/fi";
-import { FiUser } from "react-icons/fi";
 import { FiHeart } from "react-icons/fi";
 
-import { Logo } from "./Logo";
-import { InputGroup } from "./ui/input-group";
+import { Logo } from "../Logo";
+import { InputGroup } from "../ui/input-group";
 import { CartDrawer } from "@/features/cart/CartDrawer";
+import { ProfileMenu } from "./ProfileMenu";
 
 export const Navbar = () => {
   return (
@@ -32,9 +32,7 @@ export const Navbar = () => {
             <IconButton>
               <FiHeart />
             </IconButton>
-            <IconButton>
-              <FiUser />
-            </IconButton>
+            <ProfileMenu />
           </ButtonGroup>
         </HStack>
       </Container>
