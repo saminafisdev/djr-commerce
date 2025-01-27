@@ -59,6 +59,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+    product = SimpleProductSerializer()
     subtotal = serializers.SerializerMethodField()
 
     def get_subtotal(self, cart_item):
