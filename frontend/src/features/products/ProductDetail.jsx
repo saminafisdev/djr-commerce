@@ -27,7 +27,10 @@ export const ProductDetail = () => {
   const { data: product, isLoading, isError, error } = useGetProductQuery(slug);
 
   if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error: {error?.message}</div>;
+  if (isError) {
+    if (error.status === 404) return <div>{error.data.detail}</div>;
+    return <div>Error: {error?.message}</div>;
+  }
 
   return (
     <Container pt={8}>
