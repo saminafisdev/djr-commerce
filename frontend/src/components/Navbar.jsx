@@ -25,7 +25,7 @@ export const Navbar = () => {
             <Logo width={"40px"} />
           </Icon>
           <InputGroup startElement={<FiSearch />}>
-            <Input placeholder="What are you looking for" />
+            <Input placeholder="What are you looking for" width={700} />
           </InputGroup>
           <ButtonGroup variant={"ghost"} spaceX={3}>
             <CartDrawer />
