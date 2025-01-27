@@ -1,6 +1,5 @@
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useSearchParams } from "react-router";
 
-import { Rating } from "@/components/ui/rating";
 import {
   Box,
   Button,
@@ -16,10 +15,20 @@ import {
   Text,
 } from "@chakra-ui/react";
 
+import {
+  PaginationItems,
+  PaginationNextTrigger,
+  PaginationPrevTrigger,
+  PaginationRoot,
+} from "@/components/ui/pagination";
+import { Rating } from "@/components/ui/rating";
+
 import { FiHeart } from "react-icons/fi";
 import { FiShoppingBag } from "react-icons/fi";
+import { useGetProductsQuery } from "./productsApi";
+import PropTypes from "prop-types";
 
-const ProductCard = () => {
+const ProductCard = ({ product: { id, name, unit_price } }) => {
   return (
     <GridItem>
       <Box>
@@ -48,7 +57,7 @@ const ProductCard = () => {
         <Box>
           <Text textStyle={"xl"}>
             <Link variant={"plain"} asChild>
-              <RouterLink to={`/products/1`}>T-shirt for men</RouterLink>
+              <RouterLink to={`/products/${id}`}>{name}</RouterLink>
             </Link>
           </Text>
           <Group>
@@ -60,7 +69,7 @@ const ProductCard = () => {
             />
             <Text>(300)</Text>
           </Group>
-          <Text fontWeight={"semibold"}>$20</Text>
+          <Text fontWeight={"semibold"}>${unit_price}</Text>
         </Box>
         <Button variant={"outline"} mt={4} colorPalette={"blue"} width={"full"}>
           <FiShoppingBag /> Add to Cart
@@ -71,22 +80,46 @@ const ProductCard = () => {
 };
 
 export const ProductsList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
+  const { data, isLoading, isError, error } = useGetProductsQuery(page);
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (isError) return <Text>Error: {error.message}</Text>;
+
+  const { count, results: products } = data;
+
   return (
     <Container py={6}>
       <Text fontSize={"2xl"} fontWeight={"medium"} mb={4}>
-        Product List
+        Product List ({count})
       </Text>
       <SimpleGrid minChildWidth={"xs"} gap={4}>
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </SimpleGrid>
+      <PaginationRoot
+        count={count}
+        page={page}
+        onPageChange={(e) => setSearchParams({ page: e.page })}
+        variant={"solid"}
+        colorPalette={"blue"}
+        mt={6}
+        align={"center"}
+      >
+        <PaginationPrevTrigger />
+        <PaginationItems />
+        <PaginationNextTrigger />
+      </PaginationRoot>
     </Container>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    unit_price: PropTypes.number.isRequired,
+  }).isRequired,
 };
