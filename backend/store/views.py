@@ -21,6 +21,7 @@ from .serializers import (
     CartItemSerializer,
     AddressSerializer,
     ReviewSerializer,
+    SimpleProductSerializer,
 )
 
 
@@ -31,7 +32,7 @@ class CategoryViewset(viewsets.ModelViewSet):
 
 class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = SimpleProductSerializer
     pagination_class = PageNumberPagination
     pagination_class.page_size = 10
 
