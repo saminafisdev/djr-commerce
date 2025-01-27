@@ -36,6 +36,10 @@ class ProductViewset(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     pagination_class.page_size = 10
 
+    def get_object(self):
+        slug = self.kwargs.get("slug")
+        return self.queryset.get(slug=slug)
+
 
 class CustomerViewset(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
