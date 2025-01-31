@@ -15,6 +15,9 @@ export const authApi = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    getUserInfo: builder.query({
+      query: () => "users/me/",
+    }),
   }),
 });
 

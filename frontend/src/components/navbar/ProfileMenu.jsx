@@ -10,7 +10,7 @@ import { FiUser } from "react-icons/fi";
 import { LogoutLink } from "@/features/auth/LogoutLink";
 
 import { selectIsAuthenticated } from "@/features/auth/authSlice";
-import { Button, ButtonGroup, IconButton } from "@chakra-ui/react";
+import { Button, ButtonGroup, IconButton, Text } from "@chakra-ui/react";
 
 const LoggedInMenu = () => {
   return (
@@ -38,6 +38,7 @@ export const ProfileMenu = () => {
     <PopoverRoot size={"xs"}>
       <PopoverTrigger as={IconButton}>
         <FiUser />
+        {isAuthenticated && <Text>Welcome, User</Text>}
       </PopoverTrigger>
       <PopoverContent>
         <PopoverBody>

@@ -34,7 +34,7 @@ export const Login = () => {
 
     try {
       const data = await login(formData).unwrap();
-      console.log(data);
+
       dispatch(setUser(data.auth_token));
       navigate("/products");
     } catch (err) {
