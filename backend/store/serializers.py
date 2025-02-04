@@ -58,6 +58,36 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ["id", "order", "product", "quantity", "unit_price"]
 
 
+class AddCartItemSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField()
+
+    class Meta:
+        model = CartItem
+        fields = ["id", "product_id", "quantity"]
+
+    def validate_product(self, value):
+        if not Product.objects.filter(pk=value).exists():
+            raise serializers.ValidationError("No product with the given ID was found.")
+        return value
+
+    def save(self, **kwargs):
+        user = self.context["request"].user
+        customer = Customer.objects.get(user=user)
+        cart, _ = Cart.objects.get_or_create(customer=customer)
+        product_id = self.validated_data["product_id"]
+        quantity = self.validated_data["quantity"]
+
+        try:
+            cart_item = CartItem.objects.get(cart=cart, product_id=product_id)
+            cart_item.quantity += quantity
+            cart_item.save()
+            self.instance = cart_item
+        except CartItem.DoesNotExist:
+            self.instance = CartItem.objects.create(cart=cart, **self.validated_data)
+
+        return self.instance
+
+
 class CartItemSerializer(serializers.ModelSerializer):
     product = SimpleProductSerializer()
     subtotal = serializers.SerializerMethodField()
