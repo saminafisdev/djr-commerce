@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework_nested import routers
 from .views import (
+    CartAPIView,
     CategoryViewset,
     ProductViewset,
     CustomerViewset,
@@ -35,5 +36,6 @@ urlpatterns = [
         ),
         name="product-detail",
     ),
+    path("cart/", CartAPIView.as_view(), name="cart"),
 ]
 urlpatterns += router.urls + carts_router.urls

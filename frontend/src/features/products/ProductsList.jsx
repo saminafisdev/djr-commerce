@@ -27,8 +27,11 @@ import { FiHeart } from "react-icons/fi";
 import { FiShoppingBag } from "react-icons/fi";
 import { useGetProductsQuery } from "./productsApi";
 import PropTypes from "prop-types";
+import { useAddItemMutation } from "../cart/cartApi";
 
-const ProductCard = ({ product: { name, slug, unit_price } }) => {
+const ProductCard = ({ product: { id, name, slug, unit_price } }) => {
+  const [addItem] = useAddItemMutation();
+
   return (
     <GridItem>
       <Box>
@@ -71,7 +74,13 @@ const ProductCard = ({ product: { name, slug, unit_price } }) => {
           </Group>
           <Text fontWeight={"semibold"}>${unit_price}</Text>
         </Box>
-        <Button variant={"outline"} mt={4} colorPalette={"blue"} width={"full"}>
+        <Button
+          onClick={() => addItem({ product_id: id, quantity: 1 })}
+          variant={"outline"}
+          mt={4}
+          colorPalette={"blue"}
+          width={"full"}
+        >
           <FiShoppingBag /> Add to Cart
         </Button>
       </Box>
