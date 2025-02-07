@@ -73,6 +73,8 @@ class OrderItemViewset(ModelViewSet):
 
 
 class CartAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request: Request, format=None):
         customer = Customer.objects.get(user=request.user)
         cart = get_object_or_404(
