@@ -21,10 +21,12 @@ import {
 import { FiHeart, FiShoppingBag } from "react-icons/fi";
 import { useGetProductQuery } from "./productsApi";
 import { useParams } from "react-router";
+import { useState } from "react";
 
 export const ProductDetail = () => {
   const { slug } = useParams();
   const { data: product, isLoading, isError, error } = useGetProductQuery(slug);
+  const [cartQuantity, setCartQuantity] = useState(1);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) {
@@ -70,7 +72,14 @@ export const ProductDetail = () => {
           <Text fontSize={"3xl"} fontWeight={"bold"}>
             ${product.unit_price}
           </Text>
-          <NumberInputRoot size={"lg"} width={200} defaultValue="1">
+          <NumberInputRoot
+            size={"lg"}
+            width={200}
+            min={1}
+            max={product?.inventory}
+            value={cartQuantity}
+            onValueChange={(e) => setCartQuantity(e.value)}
+          >
             <NumberInputLabel />
             <NumberInputField />
           </NumberInputRoot>
