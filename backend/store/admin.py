@@ -9,6 +9,7 @@ from .models import (
     CartItem,
     Address,
     Review,
+    Wishlist,
 )
 
 
@@ -69,3 +70,8 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ["product", "customer", "rating", "date"]
     search_fields = ["product__name", "customer__user__username"]
     list_filter = ["rating", "date"]
+
+
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ["customer"]
