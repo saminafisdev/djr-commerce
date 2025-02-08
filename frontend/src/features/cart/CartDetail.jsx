@@ -3,9 +3,25 @@ import {
   NumberInputLabel,
   NumberInputRoot,
 } from "@/components/ui/number-input";
-import { HStack, Image, Square, Stack, Text } from "@chakra-ui/react";
+import {
+  HStack,
+  IconButton,
+  Image,
+  Spinner,
+  Square,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import { FaTrash } from "react-icons/fa";
+import { useRemoveItemMutation } from "./cartApi";
 
-export const CartDetail = ({ item: { product, quantity, subtotal } }) => {
+export const CartDetail = ({ item: { id, product, quantity, subtotal } }) => {
+  const [removeItem, { isLoading }] = useRemoveItemMutation();
+
+  const removeCartItem = async () => {
+    await removeItem({ item_id: id }).unwrap();
+  };
+
   return (
     <HStack direction={"row"} spaceX={4}>
       <Square bg={"gray.50"} rounded={"md"} size={32}>
@@ -30,9 +46,28 @@ export const CartDetail = ({ item: { product, quantity, subtotal } }) => {
           <NumberInputField />
         </NumberInputRoot>
       </Stack>
-      <Text fontSize={"xl"} fontWeight={"medium"}>
-        ${product?.unit_price}
-      </Text>
+      <Stack>
+        <Text fontSize={"xl"} fontWeight={"medium"}>
+          ${subtotal}
+        </Text>
+        <IconButton color={"red"} onClick={removeCartItem}>
+          {isLoading ? <Spinner color={"gray.600"} /> : <FaTrash />}
+        </IconButton>
+      </Stack>
     </HStack>
   );
+};
+
+import PropTypes from "prop-types";
+
+CartDetail.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    product: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      unit_price: PropTypes.number.isRequired,
+    }).isRequired,
+    quantity: PropTypes.number.isRequired,
+    subtotal: PropTypes.number.isRequired,
+  }).isRequired,
 };

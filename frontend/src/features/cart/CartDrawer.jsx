@@ -15,8 +15,10 @@ import {
   Circle,
   Float,
   IconButton,
+  Spinner,
   Stack,
   StackSeparator,
+  Text,
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import { CartDetail } from "./CartDetail";
@@ -24,7 +26,7 @@ import { EmptyCart } from "./EmptyCart";
 import { useGetCartQuery } from "./cartApi";
 
 export const CartDrawer = () => {
-  const { data, isLoading, isError, error } = useGetCartQuery();
+  const { data, isFetching, isLoading, isError } = useGetCartQuery();
 
   if (isLoading) return <h3>Loading</h3>;
   if (isError) return <h3>Error fetching Cart</h3>;
@@ -48,14 +50,20 @@ export const CartDrawer = () => {
           <DrawerTitle fontSize={"2xl"}>My Cart</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          <Stack spaceY={4} separator={<StackSeparator />}>
-            {data?.items.map((item) => (
-              <CartDetail key={item.id} item={item} />
-            ))}
-          </Stack>
-          {/* <EmptyCart /> */}
+          {data?.items.length ? (
+            <Stack spaceY={4} separator={<StackSeparator />}>
+              {data?.items.map((item) => (
+                <CartDetail key={item.id} item={item} />
+              ))}
+            </Stack>
+          ) : (
+            <EmptyCart />
+          )}
         </DrawerBody>
         <DrawerFooter>
+          <Text mr="auto" fontSize={"2xl"}>
+            Total: {isFetching ? <Spinner /> : `$${data?.total_price}`}
+          </Text>
           <DrawerActionTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerActionTrigger>
