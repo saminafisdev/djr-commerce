@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
+
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet, ReadOnlyModelViewSet
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.mixins import (
@@ -11,6 +13,7 @@ from rest_framework.mixins import (
     DestroyModelMixin,
 )
 from rest_framework.pagination import PageNumberPagination
+
 from .models import (
     Category,
     Product,
@@ -21,6 +24,8 @@ from .models import (
     CartItem,
     Address,
     Review,
+    Wishlist,
+    WishlistItem,
 )
 from .serializers import (
     AddCartItemSerializer,
@@ -34,6 +39,7 @@ from .serializers import (
     AddressSerializer,
     ReviewSerializer,
     SimpleProductSerializer,
+    WishlistSerializer,
 )
 
 
@@ -137,3 +143,53 @@ class AddressViewset(ModelViewSet):
 class ReviewViewset(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+
+class WishlistViewset(ReadOnlyModelViewSet):
+    serializer_class = WishlistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        customer = Customer.objects.filter(user=self.request.user).first()
+
+        if not customer:
+            return Wishlist.objects.none()
+
+        return (
+            Wishlist.objects.filter(customer=customer)
+            .select_related("customer")
+            .prefetch_related("items")
+        )
+
+    def perform_create(self, serializer):
+        customer = Customer.objects.get(user=self.request.user)
+        serializer.save(customer=customer)
+
+    @action(detail=False, methods=["post"], url_path="add")
+    def add_to_wishlist(self, request: Request):
+        """Add a product to the user's wishlist. Creates wishlist if needed."""
+        customer = Customer.objects.get(user=request.user)
+        product_id = request.data.get("product_id")
+
+        # Ensure product exists
+        try:
+            product = Product.objects.get(pk=product_id)
+        except Product.DoesNotExist:
+            return Response(
+                {"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get or create a wishlist
+        wishlist, created = Wishlist.objects.get_or_create(customer=customer)
+
+        # Check if product is already in wishllist
+        if WishlistItem.objects.filter(wishlist=wishlist, product=product).exists():
+            return Response(
+                {"detail": "Product is already in wishlist."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        WishlistItem.objects.create(wishlist=wishlist, product=product)
+        return Response(
+            {"detail": "Product added to wishlist."}, status=status.HTTP_201_CREATED
+        )
