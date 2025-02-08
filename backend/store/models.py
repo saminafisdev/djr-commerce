@@ -146,3 +146,22 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.rating} - {self.product.name}"
+
+
+class Wishlist(models.Model):
+    customer = models.OneToOneField(
+        Customer, on_delete=models.CASCADE, related_name="wishlists"
+    )
+
+
+class WishlistItem(models.Model):
+    wishlist = models.ForeignKey(
+        Wishlist, on_delete=models.CASCADE, related_name="items"
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [["product", "wishlist"]]
+
+    def __str__(self):
+        return f"{self.wishlist.customer.user.username} - {self.product.name}"
