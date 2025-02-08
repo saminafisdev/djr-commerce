@@ -8,6 +8,7 @@ import {
   Float,
   GridItem,
   Group,
+  HStack,
   IconButton,
   Image,
   Link,
@@ -115,11 +116,12 @@ export const ProductsList = () => {
         variant={"solid"}
         colorPalette={"blue"}
         mt={6}
-        align={"center"}
       >
-        <PaginationPrevTrigger />
-        <PaginationItems />
-        <PaginationNextTrigger />
+        <HStack justify={"center"}>
+          <PaginationPrevTrigger />
+          <PaginationItems />
+          <PaginationNextTrigger />
+        </HStack>
       </PaginationRoot>
     </Container>
   );
