@@ -88,7 +88,7 @@ class CartAPIView(APIView):
         serializer = AddCartItemSerializer(
             data=request.data, context={"request": request}
         )
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
