@@ -38,7 +38,7 @@ from .serializers import (
     CartItemSerializer,
     AddressSerializer,
     ReviewSerializer,
-    SimpleProductSerializer,
+    WishlistItemSerializer,
     WishlistSerializer,
 )
 
@@ -145,51 +145,77 @@ class ReviewViewset(ModelViewSet):
     serializer_class = ReviewSerializer
 
 
-class WishlistViewset(ReadOnlyModelViewSet):
-    serializer_class = WishlistSerializer
-    permission_classes = [IsAuthenticated]
+class WishlistAPIView(APIView):
+    """API for viewing and adding products to the wishlist."""
 
-    def get_queryset(self):
-        customer = Customer.objects.filter(user=self.request.user).first()
-
-        if not customer:
-            return Wishlist.objects.none()
-
-        return (
-            Wishlist.objects.filter(customer=customer)
-            .select_related("customer")
-            .prefetch_related("items")
+    def get(self, request, format=None):
+        """Retrieve the user's wishlist items."""
+        customer = get_object_or_404(Customer, user=request.user)
+        wishlist = (
+            Wishlist.objects.prefetch_related("items__product")
+            .filter(customer=customer)
+            .first()
         )
 
-    def perform_create(self, serializer):
-        customer = Customer.objects.get(user=self.request.user)
-        serializer.save(customer=customer)
-
-    @action(detail=False, methods=["post"], url_path="add")
-    def add_to_wishlist(self, request: Request):
-        """Add a product to the user's wishlist. Creates wishlist if needed."""
-        customer = Customer.objects.get(user=request.user)
-        product_id = request.data.get("product_id")
-
-        # Ensure product exists
-        try:
-            product = Product.objects.get(pk=product_id)
-        except Product.DoesNotExist:
+        if not wishlist:
             return Response(
-                {"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Your wishlist is empty."}, status=status.HTTP_200_OK
             )
 
-        # Get or create a wishlist
-        wishlist, created = Wishlist.objects.get_or_create(customer=customer)
+        serializer = WishlistSerializer(wishlist)
+        return Response(serializer.data)
 
-        # Check if product is already in wishllist
-        if WishlistItem.objects.filter(wishlist=wishlist, product=product).exists():
+    def post(self, request, format=None):
+        """
+        Add a product to the wishlist.
+        Request body: {'product_id': 1}
+        """
+        customer = get_object_or_404(Customer, user=request.user)
+        product = get_object_or_404(Product, pk=request.data.get("product_id"))
+
+        wishlist, _ = Wishlist.objects.get_or_create(customer=customer)
+
+        # Check if product already exists in the wishlist
+        wishlist_item, created = WishlistItem.objects.get_or_create(
+            wishlist=wishlist, product=product
+        )
+
+        if not created:
             return Response(
-                {"detail": "Product is already in wishlist."},
+                {"detail": "Product is already in your wishlist."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        WishlistItem.objects.create(wishlist=wishlist, product=product)
+        serializer = WishlistItemSerializer(wishlist_item)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, format=None):
+        """
+        Remove a product from the wishlist.
+        Request body: {'product_id': 1}
+        """
+        customer = get_object_or_404(Customer, user=request.user)
+        product_id = request.data.get("product_id")
+
+        wishlist = Wishlist.objects.filter(customer=customer).first()
+        if not wishlist:
+            return Response(
+                {"detail": "Wishlist does not exist."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        wishlist_item = WishlistItem.objects.filter(
+            wishlist=wishlist, product_id=product_id
+        ).first()
+
+        if not wishlist_item:
+            return Response(
+                {"detail": "Product not found in wishlist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        wishlist_item.delete()
+
         return Response(
-            {"detail": "Product added to wishlist."}, status=status.HTTP_201_CREATED
+            {"detail": "Product removed from wishlist."},
+            status=status.HTTP_204_NO_CONTENT,
         )

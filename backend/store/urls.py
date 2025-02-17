@@ -11,7 +11,7 @@ from .views import (
     CartItemViewset,
     AddressViewset,
     ReviewViewset,
-    WishlistViewset,
+    WishlistAPIView,
 )
 
 router = routers.DefaultRouter()
@@ -25,7 +25,6 @@ router.register("carts", CartViewset, basename="cart")
 router.register("cart-items", CartItemViewset, basename="cartitem")
 router.register("addresses", AddressViewset, basename="address")
 router.register("reviews", ReviewViewset, basename="review")
-router.register("wishlist", WishlistViewset, basename="wishlist")
 
 carts_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
 carts_router.register("items", CartItemViewset, basename="cart-item")
@@ -39,5 +38,6 @@ urlpatterns = [
         name="product-detail",
     ),
     path("cart/", CartAPIView.as_view(), name="cart"),
+    path("wishlist/", WishlistAPIView.as_view(), name="wishlist"),
 ]
 urlpatterns += router.urls + carts_router.urls
