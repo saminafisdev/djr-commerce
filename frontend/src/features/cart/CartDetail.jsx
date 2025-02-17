@@ -50,7 +50,7 @@ export const CartDetail = ({ item: { id, product, quantity, subtotal } }) => {
         <Text fontSize={"xl"} fontWeight={"medium"}>
           ${subtotal}
         </Text>
-        <IconButton color={"red"} onClick={removeCartItem}>
+        <IconButton colorPalette={"red"} onClick={removeCartItem}>
           {isLoading ? <Spinner color={"gray.600"} /> : <FaTrash />}
         </IconButton>
       </Stack>

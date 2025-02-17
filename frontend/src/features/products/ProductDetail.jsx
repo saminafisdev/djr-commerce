@@ -22,10 +22,19 @@ import { FiHeart, FiShoppingBag } from "react-icons/fi";
 import { useGetProductQuery } from "./productsApi";
 import { useParams } from "react-router";
 import { useState } from "react";
+import {
+  useAddToWishlistMutation,
+  useGetWishlistQuery,
+  useRemoveWishlistItemMutation,
+} from "../wishlist/wishlistApi";
+import { FaHeart } from "react-icons/fa";
 
 export const ProductDetail = () => {
   const { slug } = useParams();
   const { data: product, isLoading, isError, error } = useGetProductQuery(slug);
+  const { data: wishlist } = useGetWishlistQuery();
+  const [addToWishlist] = useAddToWishlistMutation();
+  const [removeFromWishlist] = useRemoveWishlistItemMutation();
   const [cartQuantity, setCartQuantity] = useState(1);
 
   if (isLoading) return <div>Loading...</div>;
@@ -33,6 +42,9 @@ export const ProductDetail = () => {
     if (error.status === 404) return <div>{error.data.detail}</div>;
     return <div>Error: {error?.message}</div>;
   }
+
+  const wishlistIds = new Set(wishlist?.items.map((item) => item.product.id));
+  console.log(wishlistIds);
 
   return (
     <Container pt={8}>
@@ -45,14 +57,27 @@ export const ProductDetail = () => {
             alt="product name"
           />
           <Float offset={"12"}>
-            <IconButton
-              rounded={"full"}
-              colorPalette={"gray"}
-              variant={"subtle"}
-              size={"2xl"}
-            >
-              <FiHeart />
-            </IconButton>
+            {wishlistIds.has(product?.id) ? (
+              <IconButton
+                rounded={"full"}
+                colorPalette={"red"}
+                variant={"subtle"}
+                size={"2xl"}
+                onClick={() => removeFromWishlist({ product_id: product.id })}
+              >
+                <FaHeart />
+              </IconButton>
+            ) : (
+              <IconButton
+                rounded={"full"}
+                colorPalette={"gray"}
+                variant={"subtle"}
+                size={"2xl"}
+                onClick={() => addToWishlist({ product_id: product.id })}
+              >
+                <FiHeart />
+              </IconButton>
+            )}
           </Float>
         </Square>
         <Stack gap={5}>

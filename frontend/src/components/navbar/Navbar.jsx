@@ -15,6 +15,7 @@ import { Logo } from "../Logo";
 import { InputGroup } from "../ui/input-group";
 import { CartDrawer } from "@/features/cart/CartDrawer";
 import { ProfileMenu } from "./ProfileMenu";
+import { Link } from "react-router";
 
 export const Navbar = () => {
   return (
@@ -29,8 +30,10 @@ export const Navbar = () => {
           </InputGroup>
           <ButtonGroup variant={"ghost"} spaceX={3}>
             <CartDrawer />
-            <IconButton>
-              <FiHeart />
+            <IconButton asChild>
+              <Link to={"/wishlist"}>
+                <FiHeart />
+              </Link>
             </IconButton>
             <ProfileMenu />
           </ButtonGroup>

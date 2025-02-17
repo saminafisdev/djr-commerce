@@ -29,9 +29,20 @@ import { FiShoppingBag } from "react-icons/fi";
 import { useGetProductsQuery } from "./productsApi";
 import PropTypes from "prop-types";
 import { useAddItemMutation } from "../cart/cartApi";
+import {
+  useAddToWishlistMutation,
+  useGetWishlistQuery,
+  useRemoveWishlistItemMutation,
+} from "../wishlist/wishlistApi";
+import { FaHeart } from "react-icons/fa";
 
-const ProductCard = ({ product: { id, name, slug, unit_price } }) => {
-  const [addItem] = useAddItemMutation();
+const ProductCard = ({
+  product: { id, name, slug, unit_price },
+  isWishlisted,
+}) => {
+  const [addToCart] = useAddItemMutation();
+  const [addToWishlist] = useAddToWishlistMutation();
+  const [removeFromWishlist] = useRemoveWishlistItemMutation();
 
   return (
     <GridItem>
@@ -49,13 +60,25 @@ const ProductCard = ({ product: { id, name, slug, unit_price } }) => {
             alt="product name"
           />
           <Float offset={8}>
-            <IconButton
-              rounded={"full"}
-              colorPalette={"gray"}
-              variant={"subtle"}
-            >
-              <FiHeart />
-            </IconButton>
+            {isWishlisted ? (
+              <IconButton
+                rounded={"full"}
+                colorPalette={"red"}
+                variant={"subtle"}
+                onClick={() => removeFromWishlist({ product_id: id })}
+              >
+                <FaHeart />
+              </IconButton>
+            ) : (
+              <IconButton
+                rounded={"full"}
+                colorPalette={"gray"}
+                variant={"subtle"}
+                onClick={() => addToWishlist({ product_id: id })}
+              >
+                <FiHeart />
+              </IconButton>
+            )}
           </Float>
         </Center>
         <Box>
@@ -76,7 +99,7 @@ const ProductCard = ({ product: { id, name, slug, unit_price } }) => {
           <Text fontWeight={"semibold"}>${unit_price}</Text>
         </Box>
         <Button
-          onClick={() => addItem({ product_id: id, quantity: 1 })}
+          onClick={() => addToCart({ product_id: id, quantity: 1 })}
           variant={"outline"}
           mt={4}
           colorPalette={"blue"}
@@ -93,11 +116,14 @@ export const ProductsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const { data, isLoading, isError, error } = useGetProductsQuery(page);
+  const { data: wishlist } = useGetWishlistQuery();
 
   if (isLoading) return <Text>Loading...</Text>;
   if (isError) return <Text>Error: {error.message}</Text>;
 
   const { count, results: products } = data;
+
+  const wishlistIds = new Set(wishlist?.items.map((item) => item.product.id));
 
   return (
     <Container py={6}>
@@ -106,7 +132,11 @@ export const ProductsList = () => {
       </Text>
       <SimpleGrid minChildWidth={"xs"} gap={4}>
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            isWishlisted={wishlistIds.has(product.id)}
+          />
         ))}
       </SimpleGrid>
       <PaginationRoot
@@ -134,4 +164,5 @@ ProductCard.propTypes = {
     slug: PropTypes.string.isRequired,
     unit_price: PropTypes.string.isRequired,
   }).isRequired,
+  isWishlisted: PropTypes.bool.isRequired,
 };
