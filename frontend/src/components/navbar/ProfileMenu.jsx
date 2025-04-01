@@ -11,6 +11,7 @@ import { LogoutLink } from "@/features/auth/LogoutLink";
 
 import { selectIsAuthenticated } from "@/features/auth/authSlice";
 import { Button, ButtonGroup, IconButton, Text } from "@chakra-ui/react";
+import { useGetUserInfoQuery } from "@/features/auth/authApi";
 
 const LoggedInMenu = () => {
   return (
@@ -33,12 +34,13 @@ const LoggedOutMenu = () => {
 
 export const ProfileMenu = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const { data: user } = useGetUserInfoQuery();
 
   return (
     <PopoverRoot size={"xs"}>
       <PopoverTrigger as={IconButton}>
         <FiUser />
-        {isAuthenticated && <Text>Welcome, User</Text>}
+        {isAuthenticated && <Text>{user?.username}</Text>}
       </PopoverTrigger>
       <PopoverContent>
         <PopoverBody>

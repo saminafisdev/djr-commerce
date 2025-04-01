@@ -148,6 +148,8 @@ class ReviewViewset(ModelViewSet):
 class WishlistAPIView(APIView):
     """API for viewing and adding products to the wishlist."""
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         """Retrieve the user's wishlist items."""
         customer = get_object_or_404(Customer, user=request.user)

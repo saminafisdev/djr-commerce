@@ -124,3 +124,6 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
 }
+
+
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY_TEST", default="secret")

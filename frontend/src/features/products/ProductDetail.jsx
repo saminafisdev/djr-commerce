@@ -1,14 +1,12 @@
 import { Rating } from "@/components/ui/rating";
 import {
   NumberInputField,
-  NumberInputLabel,
   NumberInputRoot,
 } from "@/components/ui/number-input";
 import {
   Button,
   ButtonGroup,
   Container,
-  Flex,
   Float,
   Group,
   Heading,
@@ -18,9 +16,9 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { FiHeart, FiShoppingBag } from "react-icons/fi";
+import { FiHeart } from "react-icons/fi";
 import { useGetProductQuery } from "./productsApi";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import {
   useAddToWishlistMutation,
@@ -28,6 +26,9 @@ import {
   useRemoveWishlistItemMutation,
 } from "../wishlist/wishlistApi";
 import { FaHeart } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "../auth/authSlice";
+import { AddToCartButton } from "./AddToCartButton";
 
 export const ProductDetail = () => {
   const { slug } = useParams();
@@ -36,6 +37,8 @@ export const ProductDetail = () => {
   const [addToWishlist] = useAddToWishlistMutation();
   const [removeFromWishlist] = useRemoveWishlistItemMutation();
   const [cartQuantity, setCartQuantity] = useState(1);
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) {
@@ -48,10 +51,15 @@ export const ProductDetail = () => {
 
   return (
     <Container pt={8}>
-      <Flex gap={12}>
-        <Square bg={"gray.50"} rounded={"md"} size={"lg"} position={"relative"}>
+      <Stack direction={{ base: "column", md: "row" }} gap={12}>
+        <Square
+          bg={"gray.50"}
+          rounded={"md"}
+          size={{ base: "xs", md: "lg" }}
+          position={"relative"}
+        >
           <Image
-            height={350}
+            height={{ base: 200, md: 300 }}
             rounded={"md"}
             src="https://pngimg.com/uploads/headphones/headphones_PNG7645.png"
             alt="product name"
@@ -73,7 +81,11 @@ export const ProductDetail = () => {
                 colorPalette={"gray"}
                 variant={"subtle"}
                 size={"2xl"}
-                onClick={() => addToWishlist({ product_id: product.id })}
+                onClick={() =>
+                  isAuthenticated
+                    ? addToWishlist({ product_id: product.id })
+                    : navigate("/login")
+                }
               >
                 <FiHeart />
               </IconButton>
@@ -105,19 +117,20 @@ export const ProductDetail = () => {
             value={cartQuantity}
             onValueChange={(e) => setCartQuantity(e.value)}
           >
-            <NumberInputLabel />
             <NumberInputField />
           </NumberInputRoot>
           <ButtonGroup size={"xl"}>
-            <Button variant={"outline"} mt={4} colorPalette={"blue"}>
-              <FiShoppingBag /> Add to Cart
-            </Button>
+            <AddToCartButton
+              product_id={product.id}
+              width={"200px"}
+              quantity={cartQuantity}
+            />
             <Button variant={"solid"} mt={4} colorPalette={"blue"}>
               Buy now
             </Button>
           </ButtonGroup>
         </Stack>
-      </Flex>
+      </Stack>
     </Container>
   );
 };

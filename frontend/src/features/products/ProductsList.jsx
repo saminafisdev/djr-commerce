@@ -1,8 +1,7 @@
-import { Link as RouterLink, useSearchParams } from "react-router";
+import { Link as RouterLink, useNavigate, useSearchParams } from "react-router";
 
 import {
   Box,
-  Button,
   Center,
   Container,
   Float,
@@ -25,24 +24,26 @@ import {
 import { Rating } from "@/components/ui/rating";
 
 import { FiHeart } from "react-icons/fi";
-import { FiShoppingBag } from "react-icons/fi";
 import { useGetProductsQuery } from "./productsApi";
 import PropTypes from "prop-types";
-import { useAddItemMutation } from "../cart/cartApi";
 import {
   useAddToWishlistMutation,
   useGetWishlistQuery,
   useRemoveWishlistItemMutation,
 } from "../wishlist/wishlistApi";
 import { FaHeart } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "../auth/authSlice";
+import { AddToCartButton } from "./AddToCartButton";
 
 const ProductCard = ({
   product: { id, name, slug, unit_price },
   isWishlisted,
 }) => {
-  const [addToCart] = useAddItemMutation();
   const [addToWishlist] = useAddToWishlistMutation();
   const [removeFromWishlist] = useRemoveWishlistItemMutation();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const navigate = useNavigate();
 
   return (
     <GridItem>
@@ -74,7 +75,11 @@ const ProductCard = ({
                 rounded={"full"}
                 colorPalette={"gray"}
                 variant={"subtle"}
-                onClick={() => addToWishlist({ product_id: id })}
+                onClick={() =>
+                  isAuthenticated
+                    ? addToWishlist({ product_id: id })
+                    : navigate("/login")
+                }
               >
                 <FiHeart />
               </IconButton>
@@ -98,15 +103,7 @@ const ProductCard = ({
           </Group>
           <Text fontWeight={"semibold"}>${unit_price}</Text>
         </Box>
-        <Button
-          onClick={() => addToCart({ product_id: id, quantity: 1 })}
-          variant={"outline"}
-          mt={4}
-          colorPalette={"blue"}
-          width={"full"}
-        >
-          <FiShoppingBag /> Add to Cart
-        </Button>
+        <AddToCartButton product_id={id} width={"full"} />
       </Box>
     </GridItem>
   );

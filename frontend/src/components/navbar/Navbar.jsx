@@ -1,7 +1,9 @@
 import {
   Box,
   ButtonGroup,
+  Circle,
   Container,
+  Float,
   HStack,
   Icon,
   IconButton,
@@ -16,8 +18,17 @@ import { InputGroup } from "../ui/input-group";
 import { CartDrawer } from "@/features/cart/CartDrawer";
 import { ProfileMenu } from "./ProfileMenu";
 import { Link } from "react-router";
+import { useGetWishlistQuery } from "@/features/wishlist/wishlistApi";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "@/features/auth/authSlice";
 
 export const Navbar = () => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  const { data: wishlist } = useGetWishlistQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
   return (
     <Box>
       <Container>
@@ -25,16 +36,23 @@ export const Navbar = () => {
           <Icon>
             <Logo width={"40px"} />
           </Icon>
-          <InputGroup startElement={<FiSearch />}>
-            <Input placeholder="What are you looking for" width={700} />
+          <InputGroup startElement={<FiSearch />} width="2/3">
+            <Input placeholder="What are you looking for" />
           </InputGroup>
           <ButtonGroup variant={"ghost"} spaceX={3}>
             <CartDrawer />
-            <IconButton asChild>
-              <Link to={"/wishlist"}>
+            <Link to={"/wishlist"}>
+              <IconButton position="relative">
                 <FiHeart />
-              </Link>
-            </IconButton>
+                {isAuthenticated && (
+                  <Float placement={"top-end"}>
+                    <Circle size={5} bg={"blue.500"} color={"white"}>
+                      {wishlist?.items.length}
+                    </Circle>
+                  </Float>
+                )}
+              </IconButton>
+            </Link>
             <ProfileMenu />
           </ButtonGroup>
         </HStack>

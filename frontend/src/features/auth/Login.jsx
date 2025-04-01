@@ -15,7 +15,7 @@ import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useLoginMutation } from "./authApi";
 import { useDispatch } from "react-redux";
-import { setUser } from "./authSlice";
+import { setCredentials } from "./authSlice";
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ export const Login = () => {
     try {
       const data = await login(formData).unwrap();
 
-      dispatch(setUser(data.auth_token));
+      dispatch(setCredentials(data.auth_token));
       navigate("/products");
     } catch (err) {
       console.error(err);

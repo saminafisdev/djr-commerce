@@ -24,10 +24,22 @@ import { FiShoppingCart } from "react-icons/fi";
 import { CartDetail } from "./CartDetail";
 import { EmptyCart } from "./EmptyCart";
 import { useGetCartQuery } from "./cartApi";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "../auth/authSlice";
+import { UnauthorizedCart } from "./UnauthorizedCart";
+import { Link } from "react-router";
 
 export const CartDrawer = () => {
-  const { data, isFetching, isLoading, isError } = useGetCartQuery();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
+  const {
+    data: cart,
+    isFetching,
+    isLoading,
+    isError,
+  } = useGetCartQuery(undefined, {
+    skip: !isAuthenticated,
+  });
   if (isLoading) return <h3>Loading</h3>;
   if (isError) return <h3>Error fetching Cart</h3>;
 
@@ -37,11 +49,13 @@ export const CartDrawer = () => {
       <DrawerTrigger>
         <IconButton position={"relative"}>
           <FiShoppingCart />
-          <Float>
-            <Circle bg={"blue.500"} color={"white"} size={5}>
-              {data?.total_items}
-            </Circle>
-          </Float>
+          {isAuthenticated && (
+            <Float>
+              <Circle bg={"blue.500"} color={"white"} size={5}>
+                {cart?.total_items}
+              </Circle>
+            </Float>
+          )}
         </IconButton>
       </DrawerTrigger>
       <DrawerContent>
@@ -50,9 +64,11 @@ export const CartDrawer = () => {
           <DrawerTitle fontSize={"2xl"}>My Cart</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          {data?.items.length ? (
+          {!isAuthenticated ? (
+            <UnauthorizedCart />
+          ) : cart?.items.length > 0 ? (
             <Stack spaceY={4} separator={<StackSeparator />}>
-              {data?.items.map((item) => (
+              {cart?.items.map((item) => (
                 <CartDetail key={item.id} item={item} />
               ))}
             </Stack>
@@ -61,9 +77,16 @@ export const CartDrawer = () => {
           )}
         </DrawerBody>
         <DrawerFooter>
-          <Text mr="auto" fontSize={"2xl"}>
-            Total: {isFetching ? <Spinner /> : `$${data?.total_price}`}
-          </Text>
+          {isAuthenticated && (
+            <Text mr="auto" fontSize={"2xl"}>
+              Total: {isFetching ? <Spinner /> : `$${cart?.total_price}`}
+            </Text>
+          )}
+          {cart?.items.length > 0 ? (
+            <Button variant={"solid"} colorPalette={"green"} asChild>
+              <Link to={"/checkout"}>Checkout</Link>
+            </Button>
+          ) : null}
           <DrawerActionTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerActionTrigger>
