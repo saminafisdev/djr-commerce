@@ -1,6 +1,7 @@
-from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
 
-from rest_framework.decorators import action
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
@@ -13,6 +14,7 @@ from rest_framework.mixins import (
     DestroyModelMixin,
 )
 from rest_framework.pagination import PageNumberPagination
+import stripe
 
 from .models import (
     Category,
@@ -41,6 +43,8 @@ from .serializers import (
     WishlistItemSerializer,
     WishlistSerializer,
 )
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class CategoryViewset(ModelViewSet):
@@ -221,3 +225,48 @@ class WishlistAPIView(APIView):
             {"detail": "Product removed from wishlist."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+@api_view(["POST"])
+def create_checkout_session(request):
+    YOUR_DOMAIN = request.build_absolute_uri("/")[:-1]
+    cart = get_object_or_404(Cart, customer=request.user.customer)
+    line_items = []
+
+    for cart_item in cart.items.all():
+        product = cart_item.product
+        line_items.append(
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": product.name,
+                        "images": [
+                            "https://pngimg.com/uploads/headphones/headphones_PNG7645.png",
+                        ],
+                    },
+                    "unit_amount": int(product.unit_price * 100),
+                },
+                "quantity": cart_item.quantity,
+            }
+        )
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            customer_email=request.user.email,
+            line_items=line_items,
+            payment_method_types=["card"],
+            mode="payment",
+            success_url=settings.FRONTEND_BASE_URL
+            + "/success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=settings.FRONTEND_BASE_URL + "/cancel",
+            metadata={
+                "cart_id": cart.id,
+            },
+        )
+    except stripe.error.StripeError as e:
+        print("Stripe error:", e)
+    except Exception as e:
+        print("General error:", e)
+
+    return Response(data=checkout_session.url)

@@ -12,6 +12,7 @@ from .views import (
     AddressViewset,
     ReviewViewset,
     WishlistAPIView,
+    create_checkout_session,
 )
 
 router = routers.DefaultRouter()
@@ -39,5 +40,10 @@ urlpatterns = [
     ),
     path("cart/", CartAPIView.as_view(), name="cart"),
     path("wishlist/", WishlistAPIView.as_view(), name="wishlist"),
+    path(
+        "create-checkout-session/",
+        create_checkout_session,
+        name="create-checkout-session",
+    ),
 ]
 urlpatterns += router.urls + carts_router.urls

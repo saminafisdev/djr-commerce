@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(BASE_DIR / ".env")
 
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 
 DEBUG = env("DEBUG")
@@ -126,4 +126,8 @@ SIMPLE_JWT = {
 }
 
 
+STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY_TEST", default="secret")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY_TEST", default="secret")
+
+
+FRONTEND_BASE_URL = env("FRONTEND_BASE_URL")

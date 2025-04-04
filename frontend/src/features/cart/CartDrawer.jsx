@@ -23,11 +23,10 @@ import {
 import { FiShoppingCart } from "react-icons/fi";
 import { CartDetail } from "./CartDetail";
 import { EmptyCart } from "./EmptyCart";
-import { useGetCartQuery } from "./cartApi";
+import { useGetCartQuery, useStripeCheckoutMutation } from "./cartApi";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "../auth/authSlice";
 import { UnauthorizedCart } from "./UnauthorizedCart";
-import { Link } from "react-router";
 
 export const CartDrawer = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -40,8 +39,21 @@ export const CartDrawer = () => {
   } = useGetCartQuery(undefined, {
     skip: !isAuthenticated,
   });
+
+  const [createCheckoutSession, { isLoading: isCheckoutLoading }] =
+    useStripeCheckoutMutation();
+
   if (isLoading) return <h3>Loading</h3>;
   if (isError) return <h3>Error fetching Cart</h3>;
+
+  const handleCheckout = async () => {
+    try {
+      const response = await createCheckoutSession().unwrap();
+      window.location.href = response;
+    } catch (err) {
+      console.error("Failed to create checkout session", err);
+    }
+  };
 
   return (
     <DrawerRoot size={"md"}>
@@ -83,8 +95,14 @@ export const CartDrawer = () => {
             </Text>
           )}
           {cart?.items.length > 0 ? (
-            <Button variant={"solid"} colorPalette={"green"} asChild>
-              <Link to={"/checkout"}>Checkout</Link>
+            <Button
+              type="submit"
+              variant={"solid"}
+              colorPalette={"green"}
+              disabled={isCheckoutLoading}
+              onClick={handleCheckout}
+            >
+              Checkout
             </Button>
           ) : null}
           <DrawerActionTrigger asChild>
