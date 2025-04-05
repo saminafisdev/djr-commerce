@@ -17,7 +17,7 @@ const LoggedInMenu = () => {
   return (
     <ButtonGroup width={"full"} variant={"ghost"} flexDirection={"column"}>
       <Button asChild>
-        <Link to={"/profile"}>Profile</Link>
+        <Link to={"/account"}>Profile</Link>
       </Button>
       <LogoutLink />
     </ButtonGroup>
