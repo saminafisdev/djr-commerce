@@ -6,7 +6,8 @@ import { ProductDetail } from "./features/products/ProductDetail";
 import { Signup } from "./features/auth/Signup";
 import { Login } from "./features/auth/Login";
 import { WishlistPage } from "./features/wishlist/WishlistPage";
-import { Checkout } from "./features/checkout/Checkout";
+import { CheckoutSuccess } from "./features/checkout/pages/CheckoutSuccess";
+import { CheckoutCancel } from "./features/checkout/pages/CheckoutCancel";
 
 function App() {
   return (
@@ -21,11 +22,8 @@ function App() {
           <Route path="wishlist">
             <Route index element={<WishlistPage />} />
           </Route>
-          <Route path="/checkout" element={<Checkout />}>
-            <Route path="deliver" />
-            <Route path="payment" />
-            <Route path="confirmation" />
-          </Route>
+          <Route path="/success" element={<CheckoutSuccess />} />
+          <Route path="/cancel" element={<CheckoutCancel />} />
         </Route>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
