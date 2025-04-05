@@ -34,17 +34,17 @@ class CustomerAdmin(admin.ModelAdmin):
     list_filter = ["membership"]
 
 
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 1
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ["id", "order_date", "shipped_date", "status", "customer"]
+    list_display = ["id", "order_date", "shipped_date", "payment_status", "customer"]
     search_fields = ["id", "customer__user__username"]
-    list_filter = ["status", "order_date"]
-
-
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ["order", "product", "quantity", "unit_price"]
-    search_fields = ["order__id", "product__name"]
+    list_filter = ["payment_status", "order_date"]
+    inlines = [OrderItemInline]
 
 
 @admin.register(Cart)

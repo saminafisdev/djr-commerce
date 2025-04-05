@@ -72,26 +72,22 @@ class Customer(models.Model):
 
 
 class Order(models.Model):
-    PAYMENT_PENDING = "Pending"
-    PAYMENT_PROCESSING = "Processing"
-    PAYMENT_SHIPPED = "Shipped"
-    PAYMENT_DELIVERED = "Delivered"
-    PAYMENT_CANCELLED = "Cancelled"
+    PAYMENT_STATUS_PENDING = "Pending"
+    PAYMENT_STATUS_COMPLETE = "Complete"
+    PAYMENT_STATUS_FAIL = "Failed"
 
     PAYMENT_CHOICES = [
-        (PAYMENT_PENDING, "Pending"),
-        (PAYMENT_PROCESSING, "Processing"),
-        (PAYMENT_SHIPPED, "Shipped"),
-        (PAYMENT_DELIVERED, "Delivered"),
-        (PAYMENT_CANCELLED, "Cancelled"),
+        (PAYMENT_STATUS_COMPLETE, "Complete"),
+        (PAYMENT_STATUS_PENDING, "Pending"),
+        (PAYMENT_STATUS_FAIL, "Failed"),
     ]
 
     order_date = models.DateTimeField(auto_now_add=True)
     shipped_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(
+    payment_status = models.CharField(
         max_length=50,
         choices=PAYMENT_CHOICES,
-        default=PAYMENT_PENDING,
+        default=PAYMENT_STATUS_PENDING,
     )
     customer = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True, related_name="orders"
