@@ -49,6 +49,7 @@ class CurrentCustomerSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source="customer.phone", read_only=True)
     birth_date = serializers.DateField(source="customer.birth_date", read_only=True)
     membership = serializers.CharField(source="customer.membership", read_only=True)
+    gender = serializers.CharField(source="customer.gender", read_only=True)
 
     class Meta:
         model = User
@@ -60,6 +61,7 @@ class CurrentCustomerSerializer(serializers.ModelSerializer):
             "email",
             "phone",
             "birth_date",
+            "gender",
             "membership",
         ]
 
@@ -67,7 +69,7 @@ class CurrentCustomerSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ["id", "order_date", "shipped_date", "status", "customer"]
+        fields = ["id", "order_date", "shipped_date", "payment_status", "customer"]
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

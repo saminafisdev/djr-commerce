@@ -60,11 +60,24 @@ class Customer(models.Model):
         (MEMBERSHIP_GOLD, "Gold"),
     ]
 
-    phone = models.CharField(max_length=255)
+    GENDER_MALE = "Male"
+    GENDER_FEMALE = "Female"
+    GENDER_OTHER = "Other"
+
+    GENDER_CHOICES = [
+        (GENDER_MALE, "Male"),
+        (GENDER_FEMALE, "Female"),
+        (GENDER_OTHER, "Other"),
+    ]
+
     birth_date = models.DateField(null=True, blank=True)
+    gender = models.CharField(
+        max_length=6, choices=GENDER_CHOICES, blank=True, null=True
+    )
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
+    phone = models.CharField(max_length=255)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
