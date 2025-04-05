@@ -121,6 +121,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+DJOSER = {
+    "SERIALIZERS": {
+        "current_user": "store.serializers.CurrentCustomerSerializer",
+    },
+}
+
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
 }

@@ -34,7 +34,7 @@ from .serializers import (
     AddCartItemSerializer,
     CategorySerializer,
     ProductSerializer,
-    CustomerSerializer,
+    CurrentCustomerSerializer,
     OrderSerializer,
     OrderItemSerializer,
     CartSerializer,
@@ -71,7 +71,7 @@ class ProductViewset(ModelViewSet):
 
 class CustomerViewset(ModelViewSet):
     queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
+    serializer_class = CurrentCustomerSerializer
 
 
 class OrderViewset(ModelViewSet):

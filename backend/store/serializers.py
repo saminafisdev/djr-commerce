@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from core.models import User
 from .models import (
     Category,
     Product,
@@ -12,6 +14,7 @@ from .models import (
     Wishlist,
     WishlistItem,
 )
+from django.conf import settings
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -42,10 +45,23 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
-class CustomerSerializer(serializers.ModelSerializer):
+class CurrentCustomerSerializer(serializers.ModelSerializer):
+    phone = serializers.CharField(source="customer.phone", read_only=True)
+    birth_date = serializers.DateField(source="customer.birth_date", read_only=True)
+    membership = serializers.CharField(source="customer.membership", read_only=True)
+
     class Meta:
-        model = Customer
-        fields = ["id", "phone", "birth_date", "membership", "user"]
+        model = User
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "phone",
+            "birth_date",
+            "membership",
+        ]
 
 
 class OrderSerializer(serializers.ModelSerializer):
