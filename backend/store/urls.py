@@ -13,6 +13,7 @@ from .views import (
     ReviewViewset,
     WishlistAPIView,
     create_checkout_session,
+    stripe_webhook,
 )
 
 router = routers.DefaultRouter()
@@ -45,5 +46,6 @@ urlpatterns = [
         create_checkout_session,
         name="create-checkout-session",
     ),
+    path("webhook/", stripe_webhook, name="stripe-webhook"),
 ]
 urlpatterns += router.urls + carts_router.urls

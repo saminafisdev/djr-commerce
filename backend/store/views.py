@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -258,8 +259,8 @@ def create_checkout_session(request):
             payment_method_types=["card"],
             mode="payment",
             success_url=settings.FRONTEND_BASE_URL
-            + "/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=settings.FRONTEND_BASE_URL + "/cancel",
+            + "success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=settings.FRONTEND_BASE_URL + "cancel",
             metadata={
                 "cart_id": cart.id,
             },
@@ -270,3 +271,75 @@ def create_checkout_session(request):
         print("General error:", e)
 
     return Response(data=checkout_session.url)
+
+
+def fulfill_checkout(session):
+    """
+    Fulfill the order after a successful Stripe checkout session.
+    """
+    try:
+        cart_id = session.get("metadata", {}).get("cart_id")
+        if not cart_id:
+            print("Cart ID not found in session metadata.")
+            return
+
+        cart = Cart.objects.prefetch_related("items__product").get(id=cart_id)
+        customer = cart.customer
+
+        # Create an order
+        order = Order.objects.create(
+            customer=customer,
+            status=Order.PAYMENT_STATUS_COMPLETE,
+        )
+
+        # Add items to the order
+        for cart_item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=cart_item.product,
+                quantity=cart_item.quantity,
+                unit_price=cart_item.product.unit_price,
+            )
+
+            # Update product inventory
+            cart_item.product.inventory -= cart_item.quantity
+            cart_item.product.save()
+
+        # Clear the cart
+        cart.items.all().delete()
+
+        print(
+            f"Order {order.id} created successfully for customer {customer.user.username}."
+        )
+
+    except Cart.DoesNotExist:
+        print("Cart not found.")
+    except Exception as e:
+        print(f"Error fulfilling checkout: {e}")
+
+
+@csrf_exempt
+@api_view(["POST"])
+def stripe_webhook(request):
+    """Handle Stripe webhook events."""
+    payload = request.body
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+    except ValueError as e:
+        return Response(
+            {"detail": "Invalid payload."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    except stripe.error.SignatureVerificationError as e:
+        return Response(
+            {"detail": "Invalid signature."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Handle the checkout.session.completed event
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        fulfill_checkout(session)
+
+    return Response({"detail": "Webhook received."}, status=status.HTTP_200_OK)
