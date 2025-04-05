@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 
 export const WishlistTable = ({ wishlist }) => {
   return (
-    <Table.Root size={"lg"}>
+    <Table.Root size={"lg"} interactive>
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeader></Table.ColumnHeader>
+          <Table.ColumnHeader w={40}></Table.ColumnHeader>
           <Table.ColumnHeader></Table.ColumnHeader>
           <Table.ColumnHeader>Product name</Table.ColumnHeader>
           <Table.ColumnHeader>Unit price</Table.ColumnHeader>
