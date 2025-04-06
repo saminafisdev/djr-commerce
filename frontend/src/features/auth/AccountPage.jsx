@@ -1,14 +1,16 @@
 import {
   Box,
   Button,
+  createListCollection,
   Field,
   Fieldset,
   HStack,
   Image,
   Input,
+  Select,
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useGetUserInfoQuery } from "./authApi";
 import { useEffect } from "react";
@@ -27,8 +29,9 @@ const schema = z.object({
 export const AccountPage = () => {
   const { data } = useGetUserInfoQuery();
   const {
-    register,
+    control,
     handleSubmit,
+    register,
     reset,
     formState: { errors },
   } = useForm({
@@ -60,8 +63,6 @@ export const AccountPage = () => {
     console.log(data);
   };
 
-  console.log(errors.phone);
-
   return (
     <Box flexGrow={1}>
       <form onSubmit={handleSubmit(onProfileUpdate)}>
@@ -92,8 +93,20 @@ export const AccountPage = () => {
             <HStack>
               <Field.Root>
                 <Field.Label>Gender</Field.Label>
-                <Input {...register("gender")} />
-                <Field.ErrorText>{errors.gender?.message}</Field.ErrorText>
+                <Controller
+                  control={control}
+                  name="gender"
+                  render={({ field }) => (
+                    <Select.Root
+                      name={field.name}
+                      value={field.value}
+                      onValueChange={({ value }) => field.onChange(value)}
+                      collection={genders}
+                    >
+                      <Select.HiddenSelect />
+                    </Select.Root>
+                  )}
+                />
               </Field.Root>
               <Field.Root invalid={errors.birth_date}>
                 <Field.Label>Date of Birth</Field.Label>
@@ -126,3 +139,11 @@ export const AccountPage = () => {
     </Box>
   );
 };
+
+const genders = createListCollection({
+  items: [
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+    { label: "Other", value: "other" },
+  ],
+});
