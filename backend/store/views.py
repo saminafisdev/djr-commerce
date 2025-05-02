@@ -97,8 +97,8 @@ class CartAPIView(APIView):
 
     def get(self, request: Request, format=None):
         customer = Customer.objects.get(user=request.user)
-        cart = get_object_or_404(
-            Cart.objects.prefetch_related("items"), customer=customer
+        cart, _ = Cart.objects.prefetch_related("items").get_or_create(
+            customer=customer
         )
         serializer = CartSerializer(cart)
         return Response(serializer.data)

@@ -47,7 +47,7 @@ export const Navbar = () => {
                 {isAuthenticated && (
                   <Float placement={"top-end"}>
                     <Circle size={5} bg={"blue.500"} color={"white"}>
-                      {wishlist?.items.length}
+                      {wishlist?.items?.length ?? 0}
                     </Circle>
                   </Float>
                 )}

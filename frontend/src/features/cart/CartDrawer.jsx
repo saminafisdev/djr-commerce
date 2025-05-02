@@ -58,13 +58,13 @@ export const CartDrawer = () => {
   return (
     <DrawerRoot size={"md"}>
       <DrawerBackdrop />
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <IconButton position={"relative"}>
           <FiShoppingCart />
           {isAuthenticated && (
             <Float>
               <Circle bg={"blue.500"} color={"white"} size={5}>
-                {cart?.total_items}
+                {cart?.total_items ?? 0}
               </Circle>
             </Float>
           )}
@@ -94,7 +94,7 @@ export const CartDrawer = () => {
               Total: {isFetching ? <Spinner /> : `$${cart?.total_price}`}
             </Text>
           )}
-          {cart?.items.length > 0 ? (
+          {cart?.items?.length > 0 ? (
             <Button
               type="submit"
               variant={"solid"}

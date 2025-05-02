@@ -120,7 +120,7 @@ export const ProductsList = () => {
 
   const { count, results: products } = data;
 
-  const wishlistIds = new Set(wishlist?.items.map((item) => item.product.id));
+  const wishlistIds = new Set(wishlist?.items?.map((item) => item.product.id));
 
   return (
     <Container py={6}>

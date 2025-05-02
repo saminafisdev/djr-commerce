@@ -46,7 +46,7 @@ export const Login = () => {
 
   return (
     <Center h={"100vh"}>
-      <Card.Root w={"md"}>
+      <Card.Root w={"md"} variant={"elevated"}>
         <Card.Header>
           <Card.Title>Sign in</Card.Title>
           {error?.data?.non_field_errors && (

@@ -29,7 +29,7 @@ export const AddToCartButton = ({ product_id, width, quantity }) => {
 };
 
 AddToCartButton.propTypes = {
-  product_id: PropTypes.string.isRequired,
+  product_id: PropTypes.number.isRequired,
   width: PropTypes.string,
   quantity: PropTypes.number.isRequired,
 };

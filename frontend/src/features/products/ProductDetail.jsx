@@ -46,7 +46,7 @@ export const ProductDetail = () => {
     return <div>Error: {error?.message}</div>;
   }
 
-  const wishlistIds = new Set(wishlist?.items.map((item) => item.product.id));
+  const wishlistIds = new Set(wishlist?.items?.map((item) => item.product.id));
   console.log(wishlistIds);
 
   return (

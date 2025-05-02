@@ -62,7 +62,7 @@ import PropTypes from "prop-types";
 
 CartDetail.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     product: PropTypes.shape({
       name: PropTypes.string.isRequired,
       unit_price: PropTypes.number.isRequired,
