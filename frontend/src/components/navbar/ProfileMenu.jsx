@@ -34,7 +34,9 @@ const LoggedOutMenu = () => {
 
 export const ProfileMenu = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const { data: user } = useGetUserInfoQuery();
+  const { data: user } = useGetUserInfoQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   return (
     <PopoverRoot size={"xs"}>

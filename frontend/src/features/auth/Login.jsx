@@ -16,6 +16,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useLoginMutation } from "./authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
+import { LinkButton } from "@/components/ui/link-button";
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -94,7 +95,9 @@ export const Login = () => {
         </Card.Body>
         <Card.Footer justifyContent="space-between">
           <ButtonGroup>
-            <Button variant="outline">Cancel</Button>
+            <LinkButton variant="outline" asChild>
+              <RouterLink to="/">Cancel</RouterLink>
+            </LinkButton>
             <Button
               type="submit"
               form="login_form"

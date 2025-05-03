@@ -32,13 +32,15 @@ import { AddToCartButton } from "./AddToCartButton";
 
 export const ProductDetail = () => {
   const { slug } = useParams();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const { data: product, isLoading, isError, error } = useGetProductQuery(slug);
-  const { data: wishlist } = useGetWishlistQuery();
+  const { data: wishlist } = useGetWishlistQuery(undefined, {
+    skip: !isAuthenticated,
+  });
   const [addToWishlist] = useAddToWishlistMutation();
   const [removeFromWishlist] = useRemoveWishlistItemMutation();
   const [cartQuantity, setCartQuantity] = useState(1);
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) {

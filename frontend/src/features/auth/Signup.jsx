@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation, useRegisterUserMutation } from "./authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
+import { LinkButton } from "@/components/ui/link-button";
 
 export const Signup = () => {
   const dispatch = useDispatch();
@@ -118,7 +119,9 @@ export const Signup = () => {
           </Card.Body>
           <Card.Footer justifyContent="space-between">
             <ButtonGroup>
-              <Button variant="outline">Cancel</Button>
+              <LinkButton variant="outline" asChild>
+                <RouterLink to="/">Cancel</RouterLink>
+              </LinkButton>
               <Button variant="solid" onClick={handleSubmit(onRegister)}>
                 Sign up
               </Button>

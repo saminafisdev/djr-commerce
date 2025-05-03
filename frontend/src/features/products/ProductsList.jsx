@@ -103,7 +103,7 @@ const ProductCard = ({
           </Group>
           <Text fontWeight={"semibold"}>${unit_price}</Text>
         </Box>
-        <AddToCartButton product_id={id} width={"full"} />
+        <AddToCartButton product_id={id} />
       </Box>
     </GridItem>
   );
@@ -111,9 +111,13 @@ const ProductCard = ({
 
 export const ProductsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
   const page = Number(searchParams.get("page")) || 1;
   const { data, isLoading, isError, error } = useGetProductsQuery(page);
-  const { data: wishlist } = useGetWishlistQuery();
+  const { data: wishlist } = useGetWishlistQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   if (isLoading) return <Text>Loading...</Text>;
   if (isError) return <Text>Error: {error.message}</Text>;

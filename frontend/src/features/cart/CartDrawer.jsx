@@ -44,7 +44,7 @@ export const CartDrawer = () => {
     useStripeCheckoutMutation();
 
   if (isLoading) return <h3>Loading</h3>;
-  if (isError) return <h3>Error fetching Cart</h3>;
+  if (isError) console.error("Error fetching cart");
 
   const handleCheckout = async () => {
     try {

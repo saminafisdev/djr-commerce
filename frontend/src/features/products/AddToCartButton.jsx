@@ -6,7 +6,11 @@ import { selectIsAuthenticated } from "../auth/authSlice";
 import { FiShoppingBag } from "react-icons/fi";
 import PropTypes from "prop-types";
 
-export const AddToCartButton = ({ product_id, width, quantity }) => {
+export const AddToCartButton = ({
+  product_id,
+  width = "full",
+  quantity = 1,
+}) => {
   const navigate = useNavigate();
   const [addToCart] = useAddItemMutation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -23,7 +27,7 @@ export const AddToCartButton = ({ product_id, width, quantity }) => {
       colorPalette={"blue"}
       width={width}
     >
-      <FiShoppingBag /> Add to Cart
+      <FiShoppingBag /> Add to cart
     </Button>
   );
 };
@@ -31,10 +35,5 @@ export const AddToCartButton = ({ product_id, width, quantity }) => {
 AddToCartButton.propTypes = {
   product_id: PropTypes.number.isRequired,
   width: PropTypes.string,
-  quantity: PropTypes.number.isRequired,
-};
-
-AddToCartButton.defaultProps = {
-  width: "full",
-  quantity: 1,
+  quantity: PropTypes.number,
 };
