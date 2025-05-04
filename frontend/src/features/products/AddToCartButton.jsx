@@ -6,7 +6,6 @@ import { selectIsAuthenticated } from "../auth/authSlice";
 import { FiShoppingBag } from "react-icons/fi";
 import PropTypes from "prop-types";
 import { Toaster, toaster } from "@/components/ui/toaster";
-import { useState } from "react";
 
 export const AddToCartButton = ({
   product_id,
