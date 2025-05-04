@@ -65,7 +65,7 @@ CartDetail.propTypes = {
     id: PropTypes.number.isRequired,
     product: PropTypes.shape({
       name: PropTypes.string.isRequired,
-      unit_price: PropTypes.number.isRequired,
+      unit_price: PropTypes.string.isRequired,
     }).isRequired,
     quantity: PropTypes.number.isRequired,
     subtotal: PropTypes.number.isRequired,
