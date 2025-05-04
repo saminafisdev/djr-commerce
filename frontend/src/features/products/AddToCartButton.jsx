@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "../auth/authSlice";
 import { FiShoppingBag } from "react-icons/fi";
 import PropTypes from "prop-types";
+import { Toaster, toaster } from "@/components/ui/toaster";
+import { useState } from "react";
 
 export const AddToCartButton = ({
   product_id,
@@ -15,20 +17,32 @@ export const AddToCartButton = ({
   const [addToCart] = useAddItemMutation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
+  const handleAddToCart = () => {
+    if (isAuthenticated) {
+      addToCart({ product_id: product_id, quantity: quantity });
+
+      toaster.create({
+        description: "Item added to cart",
+        type: "success",
+      });
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
-    <Button
-      onClick={() =>
-        isAuthenticated
-          ? addToCart({ product_id: product_id, quantity: quantity })
-          : navigate("/login")
-      }
-      variant={"outline"}
-      mt={4}
-      colorPalette={"blue"}
-      width={width}
-    >
-      <FiShoppingBag /> Add to cart
-    </Button>
+    <>
+      <Toaster />
+      <Button
+        onClick={handleAddToCart}
+        variant={"outline"}
+        mt={4}
+        colorPalette={"blue"}
+        width={width}
+      >
+        <FiShoppingBag /> Add to cart
+      </Button>
+    </>
   );
 };
 

@@ -49,7 +49,6 @@ export const ProductDetail = () => {
   }
 
   const wishlistIds = new Set(wishlist?.items?.map((item) => item.product.id));
-  console.log(wishlistIds);
 
   return (
     <Container pt={8}>
