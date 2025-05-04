@@ -27,7 +27,7 @@ export const WishlistPage = () => {
 
       {!isAuthenticated ? (
         <AnonymousUser />
-      ) : wishlist?.items.length > 0 ? (
+      ) : wishlist?.items?.length > 0 ? (
         <WishlistTable wishlist={wishlist} />
       ) : (
         <EmptyWishlist />
