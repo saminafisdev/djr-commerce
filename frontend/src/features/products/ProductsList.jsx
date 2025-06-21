@@ -37,7 +37,7 @@ import { selectIsAuthenticated } from "../auth/authSlice";
 import { AddToCartButton } from "./AddToCartButton";
 
 const ProductCard = ({
-  product: { id, name, slug, unit_price },
+  product: { id, name, slug, unit_price, average_rating, review_count },
   isWishlisted,
 }) => {
   const [addToWishlist] = useAddToWishlistMutation();
@@ -94,12 +94,12 @@ const ProductCard = ({
           </Text>
           <Group>
             <Rating
-              defaultValue={3}
+              defaultValue={average_rating}
               size="sm"
               colorPalette={"orange"}
               readOnly
             />
-            <Text>(300)</Text>
+            <Text>({review_count})</Text>
           </Group>
           <Text fontWeight={"semibold"}>${unit_price}</Text>
         </Box>
@@ -135,7 +135,12 @@ export const ProductsList = () => {
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            product={product}
+            product={{
+              ...product,
+              average_rating: product.average_rating
+                ? Number(product.average_rating)
+                : 0,
+            }}
             isWishlisted={wishlistIds.has(product.id)}
           />
         ))}
@@ -164,6 +169,8 @@ ProductCard.propTypes = {
     name: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
     unit_price: PropTypes.string.isRequired,
+    average_rating: PropTypes.number,
+    review_count: PropTypes.number,
   }).isRequired,
   isWishlisted: PropTypes.bool.isRequired,
 };

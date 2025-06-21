@@ -1,12 +1,13 @@
 from django.conf import settings
-from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Count, Avg
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, GenericViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.mixins import (
@@ -16,6 +17,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.pagination import PageNumberPagination
 import stripe
+from django.db.models.functions import Round
 
 from .models import (
     Category,
@@ -41,6 +43,7 @@ from .serializers import (
     CartItemSerializer,
     AddressSerializer,
     ReviewSerializer,
+    SimpleProductSerializer,
     WishlistItemSerializer,
     WishlistSerializer,
 )
@@ -54,10 +57,20 @@ class CategoryViewset(ModelViewSet):
 
 
 class ProductViewset(ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = SimpleProductSerializer
     pagination_class = PageNumberPagination
     pagination_class.page_size = 10
+
+    def get_queryset(self):
+        return (
+            Product.objects.annotate(
+                review_count=Count("reviews"),
+                average_rating=Round(Avg("reviews__rating"), 1),
+            )
+            .prefetch_related("reviews")
+            .order_by("name")
+            .all()
+        )
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -66,7 +79,7 @@ class ProductViewset(ModelViewSet):
 
     def get_object(self):
         slug = self.kwargs.get("slug")
-        return get_object_or_404(self.queryset, slug=slug)
+        return get_object_or_404(self.get_queryset(), slug=slug)
 
 
 class CustomerViewset(ModelViewSet):
@@ -156,6 +169,11 @@ class AddressViewset(ModelViewSet):
 class ReviewViewset(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated()]
+        return []
 
 
 class WishlistAPIView(APIView):

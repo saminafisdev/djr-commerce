@@ -22,6 +22,14 @@ export const cartApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Cart"],
     }),
+    updateItem: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `cart-items/${id}/`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
     stripeCheckout: builder.mutation({
       query: () => ({
         url: "create-checkout-session/",
@@ -35,5 +43,6 @@ export const {
   useGetCartQuery,
   useAddItemMutation,
   useRemoveItemMutation,
+  useUpdateItemMutation,
   useStripeCheckoutMutation,
 } = cartApi;

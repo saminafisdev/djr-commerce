@@ -22,7 +22,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField()
     unit_price = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(1)]
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(1.00)]
     )
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, related_name="products"
@@ -128,7 +128,7 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1.00)])
 
     class Meta:
         unique_together = [["cart", "product"]]
@@ -149,7 +149,7 @@ class Review(models.Model):
     )
     description = models.TextField()
     rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
+        validators=[MinValueValidator(1.00), MaxValueValidator(5)]
     )
     date = models.DateTimeField(auto_now_add=True)
 

@@ -100,12 +100,12 @@ export const ProductDetail = () => {
           </Text>
           <Group>
             <Rating
-              defaultValue={3}
+              defaultValue={product.average_rating ?? 0}
               size="lg"
               colorPalette={"orange"}
               readOnly
             />
-            <Text fontSize={"lg"}>(300)</Text>
+            <Text fontSize={"lg"}>({product.review_count})</Text>
           </Group>
           <Text fontSize={"3xl"} fontWeight={"bold"}>
             ${product.unit_price}

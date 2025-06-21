@@ -1,29 +1,36 @@
 import {
   Button,
   DrawerActionTrigger,
-  Image,
-  Stack,
-  Text,
+  EmptyState,
+  VStack,
 } from "@chakra-ui/react";
-import emptyCart from "@/assets/svg/empty_cart.svg";
+import { LuShoppingCart } from "react-icons/lu";
 import { Link } from "react-router";
 
 export const EmptyCart = () => {
   return (
-    <Stack align={"center"} justify={"center"} h={"full"} spaceY={"4"}>
-      <Image src={emptyCart} alt="Empty cart" height={60} />
-      <Text fontSize={"2xl"}>Your cart is empty</Text>
-      <DrawerActionTrigger>
-        <Button
-          variant={"solid"}
-          colorPalette={"blue"}
-          size={"xl"}
-          rounded={"lg"}
-          asChild
-        >
-          <Link to={"/products"}>Go shopping</Link>
-        </Button>
-      </DrawerActionTrigger>
-    </Stack>
+    <EmptyState.Root size={"lg"} colorPalette={"blue"}>
+      <EmptyState.Content>
+        <EmptyState.Indicator>
+          <LuShoppingCart />
+        </EmptyState.Indicator>
+        <VStack textAlign="center">
+          <EmptyState.Title>Your cart is empty</EmptyState.Title>
+          <EmptyState.Description>
+            Explore our products and add items to your cart
+          </EmptyState.Description>
+        </VStack>
+        <DrawerActionTrigger>
+          <Button
+            variant={"outline"}
+            colorPalette={"blue"}
+            rounded={"lg"}
+            asChild
+          >
+            <Link to={"/products"}>Go shopping</Link>
+          </Button>
+        </DrawerActionTrigger>
+      </EmptyState.Content>
+    </EmptyState.Root>
   );
 };

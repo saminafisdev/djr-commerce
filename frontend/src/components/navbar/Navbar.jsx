@@ -7,20 +7,17 @@ import {
   HStack,
   Icon,
   IconButton,
-  Input,
 } from "@chakra-ui/react";
-
-import { FiSearch } from "react-icons/fi";
 import { FiHeart } from "react-icons/fi";
 
 import { Logo } from "../Logo";
-import { InputGroup } from "../ui/input-group";
 import { CartDrawer } from "@/features/cart/CartDrawer";
 import { ProfileMenu } from "./ProfileMenu";
 import { Link } from "react-router";
 import { useGetWishlistQuery } from "@/features/wishlist/wishlistApi";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "@/features/auth/authSlice";
+import { SearchBar } from "../search-bar";
 
 export const Navbar = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -33,12 +30,12 @@ export const Navbar = () => {
     <Box>
       <Container>
         <HStack justifyContent={"space-between"} py={4}>
-          <Icon>
-            <Logo width={"40px"} />
-          </Icon>
-          <InputGroup startElement={<FiSearch />} width="2/3">
-            <Input placeholder="What are you looking for" />
-          </InputGroup>
+          <Link to={"/"}>
+            <Icon>
+              <Logo width={"40px"} />
+            </Icon>
+          </Link>
+          <SearchBar />
           <ButtonGroup variant={"ghost"} spaceX={3}>
             <CartDrawer />
             <Link to={"/wishlist"}>

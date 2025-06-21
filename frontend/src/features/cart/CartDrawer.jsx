@@ -22,11 +22,11 @@ import {
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import { CartDetail } from "./CartDetail";
-import { EmptyCart } from "./EmptyCart";
 import { useGetCartQuery, useStripeCheckoutMutation } from "./cartApi";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "../auth/authSlice";
 import { UnauthorizedCart } from "./UnauthorizedCart";
+import { EmptyCart } from "./EmptyCart";
 
 export const CartDrawer = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -73,7 +73,7 @@ export const CartDrawer = () => {
       <DrawerContent>
         <DrawerCloseTrigger />
         <DrawerHeader>
-          <DrawerTitle fontSize={"2xl"}>My Cart</DrawerTitle>
+          <DrawerTitle fontSize={"2xl"}>Cart</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
           {!isAuthenticated ? (

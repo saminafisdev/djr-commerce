@@ -1,3 +1,5 @@
+from os import read
+from django.db.models import Avg
 from rest_framework import serializers
 
 from core.models import User
@@ -14,7 +16,6 @@ from .models import (
     Wishlist,
     WishlistItem,
 )
-from django.conf import settings
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -23,13 +24,52 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description"]
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ["id", "product", "customer", "description", "rating", "date"]
+        read_only_fields = ["id", "customer", "date"]
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        customer = Customer.objects.get(user=user)
+        validated_data["customer"] = customer
+        return super().create(validated_data)
+
+
 class SimpleProductSerializer(serializers.ModelSerializer):
+    review_count = serializers.IntegerField(read_only=True)
+    average_rating = serializers.DecimalField(
+        read_only=True, max_digits=3, decimal_places=2
+    )
+
     class Meta:
         model = Product
-        fields = ["id", "name", "slug", "unit_price"]
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "unit_price",
+            "inventory",
+            "review_count",
+            "average_rating",
+        ]
+
+    # def get_review_count(self, obj):
+    #     return obj.reviews.count()
+
+    # def get_average_rating(self, obj):
+    #     avg = obj.reviews.aggregate(Avg("rating"))["rating__avg"]
+    #     return round(avg, 1) if avg is not None else None
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
+    review_count = serializers.IntegerField(read_only=True)
+    average_rating = serializers.DecimalField(
+        read_only=True, max_digits=3, decimal_places=2
+    )
+
     class Meta:
         model = Product
         fields = [
@@ -42,6 +82,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "inventory",
             "created_at",
             "updated_at",
+            "reviews",
+            "review_count",
+            "average_rating",
         ]
 
 
@@ -109,7 +152,7 @@ class AddCartItemSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = SimpleProductSerializer()
+    product = SimpleProductSerializer(read_only=True)
     subtotal = serializers.SerializerMethodField()
 
     def get_subtotal(self, cart_item):
@@ -150,12 +193,6 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ["id", "street", "city", "customer"]
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = ["id", "product", "customer", "description", "rating", "date"]
 
 
 class WishlistItemSerializer(serializers.ModelSerializer):
