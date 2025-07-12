@@ -8,6 +8,7 @@ import {
   ButtonGroup,
   Container,
   Float,
+  For,
   Group,
   Heading,
   IconButton,
@@ -27,6 +28,7 @@ import {
 } from "../wishlist/wishlistApi";
 import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { format, parseISO } from "date-fns";
 import { selectIsAuthenticated } from "../auth/authSlice";
 import { AddToCartButton } from "./AddToCartButton";
 
@@ -131,6 +133,37 @@ export const ProductDetail = () => {
             </Button>
           </ButtonGroup>
         </Stack>
+      </Stack>
+
+      <Stack>
+        <Heading size={"2xl"}>Ratings &amp; Reviews</Heading>
+        <For each={product.reviews} fallback={<Text>No reviews yet.</Text>}>
+          {(review) => (
+            <Stack
+              key={review.id}
+              borderWidth={1}
+              borderColor={"gray.200"}
+              p={4}
+              rounded={"md"}
+            >
+              <Group>
+                <Text fontWeight={"semibold"}>{review.customer}</Text>
+                <Text textStyle={"sm"}>
+                  {format(parseISO(review.date), "MMMM d, yyyy")}
+                </Text>
+              </Group>
+              <Group>
+                <Rating
+                  defaultValue={review.rating}
+                  size="md"
+                  colorPalette={"orange"}
+                  readOnly
+                />
+              </Group>
+              <Text textStyle={"sm"}>{review.description}</Text>
+            </Stack>
+          )}
+        </For>
       </Stack>
     </Container>
   );
