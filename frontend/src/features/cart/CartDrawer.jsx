@@ -105,9 +105,6 @@ export const CartDrawer = () => {
               Checkout
             </Button>
           ) : null}
-          <DrawerActionTrigger asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerActionTrigger>
         </DrawerFooter>
       </DrawerContent>
     </DrawerRoot>
