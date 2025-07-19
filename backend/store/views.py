@@ -3,8 +3,8 @@ from django.db.models import Count, Avg
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -18,6 +18,8 @@ from rest_framework.mixins import (
 from rest_framework.pagination import PageNumberPagination
 import stripe
 from django.db.models.functions import Round
+
+from .permissions import IsReviewAuthorOrReadOnly
 
 from .models import (
     Category,
@@ -60,6 +62,7 @@ class ProductViewset(ModelViewSet):
     serializer_class = SimpleProductSerializer
     pagination_class = PageNumberPagination
     pagination_class.page_size = 10
+    lookup_field = "slug"
 
     def get_queryset(self):
         return (
@@ -77,9 +80,9 @@ class ProductViewset(ModelViewSet):
             return ProductSerializer
         return super().get_serializer_class()
 
-    def get_object(self):
-        slug = self.kwargs.get("slug")
-        return get_object_or_404(self.get_queryset(), slug=slug)
+    # def get_object(self):
+    #     slug = self.kwargs.get("slug")
+    #     return get_object_or_404(self.get_queryset(), slug=slug)
 
 
 class CustomerViewset(ModelViewSet):
@@ -167,13 +170,19 @@ class AddressViewset(ModelViewSet):
 
 
 class ReviewViewset(ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsReviewAuthorOrReadOnly]
 
-    def get_permissions(self):
-        if self.request.method == "POST":
-            return [IsAuthenticated()]
-        return []
+    def get_queryset(self):
+        product_slug = self.kwargs.get("product_slug")
+        return Review.objects.filter(product__slug=product_slug).select_related(
+            "product"
+        )
+        
+    def perform_create(self, serializer):
+        product_slug = self.kwargs.get("product_slug")
+        product = get_object_or_404(Product, slug=product_slug)
+        serializer.save(product=product, author=self.request.user.customer)
 
 
 class WishlistAPIView(APIView):

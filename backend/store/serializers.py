@@ -25,16 +25,29 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    customer = serializers.SerializerMethodField()
+
     class Meta:
         model = Review
-        fields = ["id", "product", "customer", "description", "rating", "date"]
-        read_only_fields = ["id", "customer", "date"]
+        fields = [
+            "id",
+            "product",
+            "customer",
+            "description",
+            "rating",
+            "date",
+        ]
+        read_only_fields = ["id", "customer", "date", "product"]
 
     def create(self, validated_data):
         user = self.context["request"].user
         customer = Customer.objects.get(user=user)
         validated_data["customer"] = customer
         return super().create(validated_data)
+
+    def get_customer(self, review):
+        user = review.customer.user
+        return f"{user.first_name} {user.last_name}".strip()
 
 
 class SimpleProductSerializer(serializers.ModelSerializer):

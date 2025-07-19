@@ -26,10 +26,13 @@ router.register("order-items", OrderItemViewset, basename="orderitem")
 router.register("carts", CartViewset, basename="cart")
 router.register("cart-items", CartItemViewset, basename="cartitem")
 router.register("addresses", AddressViewset, basename="address")
-router.register("reviews", ReviewViewset, basename="review")
+# router.register("reviews", ReviewViewset, basename="review")
 
 carts_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
 carts_router.register("items", CartItemViewset, basename="cart-item")
+
+products_router = routers.NestedDefaultRouter(router, "products", lookup="product")
+products_router.register("reviews", ReviewViewset, basename="product-review")
 
 urlpatterns = [
     path(
@@ -48,4 +51,4 @@ urlpatterns = [
     ),
     path("webhook/", stripe_webhook, name="stripe-webhook"),
 ]
-urlpatterns += router.urls + carts_router.urls
+urlpatterns += router.urls + carts_router.urls + products_router.urls
